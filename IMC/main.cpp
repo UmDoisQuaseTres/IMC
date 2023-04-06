@@ -5,7 +5,7 @@
 
 class Imc {
 private:
-	float *width = nullptr, *height = nullptr, *result = nullptr;
+	float *width = nullptr, *height = nullptr, *result = nullptr, *conclusion = nullptr;
 
 public:
 	//Construtor alocando espaço na memoria para os ponteiros declarados acima
@@ -13,18 +13,27 @@ public:
 		width = new float;
 		height = new float;
 		result = new float;
+		conclusion = new float;
 	}
 	//Construtor alocando espaço na memoria para os ponteiros por parametros
 	Imc(float w, float h) { 
 		width = new float(w);
 		height = new float(h);
 		result = new float;
+		conclusion = new float;
+	}
+	~Imc() {
+		delete width;
+		delete height;
+		delete result;
+		delete conclusion;
 	}
 	//Construtor cópia
 	Imc(const Imc& other) {
 		width = new float(*(other.width));
 		height = new float(*(other.height));
 		result = new float(*(other.result));
+		conclusion = new float(*(other.conclusion));
 	}
 	//Definindo operador de atribuição
 	Imc& operator=(const Imc& other) {
@@ -32,6 +41,7 @@ public:
 			*width = *(other.width);
 			*height = *(other.height);
 			*result = *(other.result);
+			*conclusion = *(other.conclusion);
 		}
 		return *this;
 	}
@@ -48,7 +58,30 @@ public:
 	float showData() {
 		return *result;
 	}
+	void showStatus(float im) {
+		*conclusion = im;
+		 if (*conclusion >= 18 && *conclusion < 25) {
+			std::cout << "Saudável ";
+}
 
+		else if (*conclusion >= 25 && *conclusion < 30) {
+			std::cout << "Peso em excesso ";
+}
+
+		else if (*conclusion >= 30 && *conclusion < 35) {
+			std::cout << "Obesidade Grau I ";
+}
+
+		else if (*conclusion >= 35 && *conclusion < 40) {
+			std::cout << "Obesidade Grau II (severa) ";
+}
+
+		else {
+			std::cout << "Obesidade Grau III";
+}
+	
+
+	}
 };
 
 
@@ -59,6 +92,7 @@ int main() {
 		std::regex digit_regex("^[0-9.]+$");
 
 		//Criação dos ponteiros
+
 		std::string* input_w = nullptr;
 		std::string *input_h = nullptr;
 		float* heightconv = nullptr;
@@ -97,6 +131,9 @@ int main() {
 				std::cin.clear();
 				calc.calcData();
 				std::cout << calc.showData() << "\n";
+				calc.showStatus(calc.showData());
+				std::cout << "\n";
+				
 				break;
 			}
 			std::cout << "Entrada invalida. Digite um numero valido.\n";
