@@ -1,47 +1,51 @@
 #include <iostream>
 #include <regex>
 #include <string>
-
+#include <memory>
 
 class Imc {
 private:
-	float *width = nullptr, *height = nullptr, *result = nullptr, *conclusion = nullptr;
+	std::unique_ptr<float> width, height, result, conclusion;
 
 public:
 	//Construtor alocando espaço na memoria para os ponteiros declarados acima
 	Imc() {
-		width = new float;
-		height = new float;
-		result = new float;
-		conclusion = new float;
+		width = std::make_unique<float>();
+		height = std::make_unique<float>();
+		result = std::make_unique<float>();
+		conclusion = std::make_unique<float>();
 	}
 	//Construtor alocando espaço na memoria para os ponteiros por parametros
-	Imc(float w, float h) { 
-		width = new float(w);
-		height = new float(h);
-		result = new float;
-		conclusion = new float;
+	Imc(float w, float h) {
+		width = std::make_unique<float>(w);
+		height = std::make_unique<float>(h);
+		result = std::make_unique<float>();
+		conclusion = std::make_unique<float>();
 	}
-	~Imc() {
-		delete width;
-		delete height;
-		delete result;
-		delete conclusion;
-	}
+	~Imc() {}
 	//Construtor cópia
 	Imc(const Imc& other) {
-		width = new float(*(other.width));
-		height = new float(*(other.height));
-		result = new float(*(other.result));
-		conclusion = new float(*(other.conclusion));
+		width = std::make_unique<float>(*(other.width));
+		height = std::make_unique<float>(*(other.height));
+		result = std::make_unique<float>(*(other.result));
+		conclusion = std::make_unique<float>(*(other.conclusion));
 	}
-	//Definindo operador de atribuição
-	Imc& operator=(const Imc& other) {
+
+	// Construtor de movimento
+	Imc(Imc&& other) {
+		width = std::move(other.width);
+		height = std::move(other.height);
+		result = std::move(other.result);
+		conclusion = std::move(other.conclusion);
+	}
+
+	// Operador de atribuição de movimento
+	Imc& operator=(Imc&& other) {
 		if (this != &other) {
-			*width = *(other.width);
-			*height = *(other.height);
-			*result = *(other.result);
-			*conclusion = *(other.conclusion);
+			width = std::move(other.width);
+			height = std::move(other.height);
+			result = std::move(other.result);
+			conclusion = std::move(other.conclusion);
 		}
 		return *this;
 	}
@@ -92,20 +96,18 @@ int main() {
 		std::regex digit_regex("^[0-9.]+$");
 
 		//Criação dos ponteiros
-
-		std::string* input_w = nullptr;
-		std::string *input_h = nullptr;
-		float* heightconv = nullptr;
-		float *widthconv = nullptr;
+		std::unique_ptr<std::string> input_w;
+		std::unique_ptr<std::string> input_h;
+		std::unique_ptr<float> heightconv;
+		std::unique_ptr<float> widthconv;
 
 		//Alocando memoria dinamica para os ponteiros
-		input_w = new std::string;
-		input_h = new std::string;
-		heightconv = new float;
-		widthconv = new float;
+		input_w = std::make_unique<std::string>();
+		input_h = std::make_unique<std::string>();
+		heightconv = std::make_unique<float>();
+		widthconv = std::make_unique<float>();
 
 		Imc calc{};
-
 
 		while (true) {
 			std::cout << "Digite seu peso em kilos por favor: \n";
@@ -119,8 +121,6 @@ int main() {
 			}
 			std::cout << "Entrada invalida. Digite um numero valido.\n";
 		}
-		
-
 
 		while (true) {
 			std::cout << "Digite sua altura por favor: \n";
@@ -133,18 +133,11 @@ int main() {
 				std::cout << calc.showData() << "\n";
 				calc.showStatus(calc.showData());
 				std::cout << "\n";
-				
+
 				break;
 			}
 			std::cout << "Entrada invalida. Digite um numero valido.\n";
 		}
-	
-		delete input_w;
-		delete input_h;
-		delete heightconv;
-		delete widthconv;
-		
-
 	}
 	return 0;
 }
