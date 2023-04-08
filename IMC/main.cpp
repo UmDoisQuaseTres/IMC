@@ -32,7 +32,7 @@ public:
 	}
 
 	// Construtor de movimento
-	Imc(Imc&& other) {
+	Imc(Imc&& other) noexcept {
 		width = std::move(other.width);
 		height = std::move(other.height);
 		result = std::move(other.result);
@@ -40,7 +40,7 @@ public:
 	}
 
 	// Operador de atribuição de movimento
-	Imc& operator=(Imc&& other) {
+	Imc& operator=(Imc&& other) noexcept {
 		if (this != &other) {
 			width = std::move(other.width);
 			height = std::move(other.height);
